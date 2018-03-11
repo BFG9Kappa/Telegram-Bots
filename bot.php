@@ -69,26 +69,26 @@ if (!empty($_GET['setHook'])) {
  */
 } else if (!empty($_GET['delHook'])){
 
-  require 'botClass.php';
+	require 'botClass.php';
 
-  // Eliminando el Webhook de la API.
-  $ret = Bot::removerWebhook(TOKEN);
+	// Eliminando el Webhook de la API.
+	$ret = Bot::removerWebhook(TOKEN);
 
-  var_dump($ret);
+	var_dump($ret);
 
-  // Mostrando Datos de Tiempo Demorado.
-  $tfinal = microtime(true);
-  echo "\nTiempo gastado: ";
-  echo ($tfinal-$tinicial);
-  echo " segundos";
+	// Mostrando Datos de Tiempo Demorado.
+	$tfinal = microtime(true);
+	echo "\nTiempo gastado: ";
+	echo ($tfinal-$tinicial);
+	echo " segundos";
 
-  // Mostrando Datos de la Memoria Consumida
-  $mfinal = memory_get_usage()/1024;
-  echo "\nMemoria al liberar objeto: ";
-  echo $mfinal - $minicial;
-  echo "Kb\n";
+	// Mostrando Datos de la Memoria Consumida
+	$mfinal = memory_get_usage()/1024;
+	echo "\nMemoria al liberar objeto: ";
+	echo $mfinal - $minicial;
+	echo "Kb\n";
 
-  exit();
+	exit();
 
 
 /**
@@ -102,10 +102,10 @@ if (!empty($_GET['setHook'])) {
 
 	require 'botClass.php';
 
-  // Verificando que la KEY recibida coincide con la almacenada y propocionada a la API.
+	// Verificando que la KEY recibida coincide con la almacenada y propocionada a la API.
 	if ($_GET['key'] == KEY) {
 
-    // Obteniendo los datos retornados por la API en formato JSON.
+		// Obteniendo los datos retornados por la API en formato JSON.
 		$datos = file_get_contents('php://input');
 
 		if (!empty($datos)) {
@@ -113,7 +113,7 @@ if (!empty($_GET['setHook'])) {
 			// Creando el Objeto del Bot.
 			$bot = new Bot(TOKEN,ADMIN);
 
-      // Procesando el Mensaje recibido de la API.
+			// Procesando el Mensaje recibido de la API.
 			$datos = $bot->procesarMensaje($datos);
 
 			/*$fp = fopen("datos.txt", "a+");
