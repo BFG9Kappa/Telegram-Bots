@@ -19,7 +19,7 @@
  * @const string (Clave de identificación).
  * @const string (Dirección de nuestro Bot).
  * @const string (Token concedido por BotFather).
- * @const string (ID del Administrador).
+ * @const int (ID del Administrador).
  */
 define('KEY', '');
 define('REFERENCIA', ''.KEY);
