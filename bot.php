@@ -78,15 +78,15 @@ if (!empty($_GET['setHook'])) {
 
 	// Mostrando Datos de Tiempo Demorado.
 	$tfinal = microtime(true);
-	echo "\nTiempo gastado: ";
+	echo "<br>Tiempo gastado: ";
 	echo ($tfinal-$tinicial);
 	echo " segundos";
 
 	// Mostrando Datos de la Memoria Consumida
 	$mfinal = memory_get_usage()/1024;
-	echo "\nMemoria al liberar objeto: ";
+	echo "<br>Memoria al liberar objeto: ";
 	echo $mfinal - $minicial;
-	echo "Kb\n";
+	echo "Kb";
 
 	exit();
 
@@ -101,9 +101,12 @@ if (!empty($_GET['setHook'])) {
 } else if (!empty($_GET['key'])) {
 
 	require 'botClass.php';
+	require 'validateClass.php';
+
 
 	// Verificando que la KEY recibida coincide con la almacenada y propocionada a la API.
 	if ($_GET['key'] == KEY) {
+
 
 		// Obteniendo los datos retornados por la API en formato JSON.
 		$datos = file_get_contents('php://input');
@@ -116,19 +119,7 @@ if (!empty($_GET['setHook'])) {
 			// Procesando el Mensaje recibido de la API.
 			$datos = $bot->procesarMensaje($datos);
 
-			/*$fp = fopen("datos.txt", "a+");
-			if ($datos==false) {
-				fwrite($fp, 'fail');
-			} else {
-				fwrite($fp, print_r($datos,true));
-			}
-			fclose($fp);*/
-
-
 		} else {
-			$fp = fopen("datos.txt", "a+");
-			fwrite($fp, "empty");
-			fclose($fp);
 			exit();
 		}
 	}
@@ -146,6 +137,5 @@ if (!empty($_GET['setHook'])) {
 	echo "Kb\n";
 
 }
-
 
 ?>
