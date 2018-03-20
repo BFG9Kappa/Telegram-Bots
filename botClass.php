@@ -133,13 +133,10 @@ class Bot
 			// Verificando si es el Administrador el remitente.
 			if ($mensaje->message->from->id == $this->admin) {
 
-				$contestar = ($mensaje->message->text == 'ping') ? 'pong' : (($mensaje->message->text == 'pong') ? 'ping' : '404');
+				// Verificando el contenido del Mensaje y respondiendo.
+				$contestar = $this->verificarMensaje($mensaje->message->text);
 
 				$this->enviarMensaje($this->admin,$contestar,'Markdown',null,null,null,null);
-
-				$fp = fopen('datos.txt', 'a+');
-				fwrite($fp, 'Admin envia: '.$mensaje->message->text);
-				fclose($fp);
 
 				return $mensaje;
 			}
@@ -240,7 +237,7 @@ class Bot
 	 *
 	 * @param objeto json.
 	 *
-	 * @return bool (Correcto || Error).
+	 * @return string.
 	 */
 	public static function validarRespuestaJSON($json)
 	{
@@ -254,6 +251,35 @@ class Bot
 		}
 	}
 
+
+
+	/**
+	 * Subdivide el mensaje original y comprueba
+	 * su contenido, lo filtra y determina
+	 * una respuesta que arrojar.
+	 *
+	 * @param string (contenido del mensaje).
+	 *
+	 * @return string (respuesta a enviar).
+	 */
+	private function verificarMensaje($mensaje)
+	{
+		// Obteniendo los grupos de argumentos.
+		$argumentos = explode(' ', $mensaje);
+
+		try{
+
+			// Verificando que el 1er argumento sea un comando.
+			if (Validaciones::isACommand($argumentos[0])) {
+				return Validaciones::buscarComando($argumentos,sizeof($argumentos));
+			} else {
+				throw new Exception('Error not Command');
+			}
+
+		}catch(Exception $e){
+			return 'Invalid!';
+		}
+	}
 
 
 
