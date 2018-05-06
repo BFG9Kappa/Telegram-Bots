@@ -20,7 +20,7 @@ class Bot
 	 *
 	 * @var string $url.
 	 */
-	protected $url = 'https://api.telegram.org/bot';
+	static $url = 'https://api.telegram.org/bot';
 
 
 	/**
@@ -28,61 +28,47 @@ class Bot
 	 *
 	 * @var int $telegramtimeout.
 	 */
-	protected $telegramtimeout = 20;
-
-
-	/**
-	 * Token del Bot (generado con
-	 *  BotFather desde Telegram).
-	 *
-	 * @var string $token
-	 */
-	protected $token;
-
-
-	/**
-	 * Administrador del Bot.
-	 *
-	 * @var int $admin
-	 */
-	protected $admin;
-
-
-	/**
-	 * Objeto cURL.
-	 *
-	 * @var cURL type.
-	 */
-	protected $curl;
+	static $telegramtimeout = 20;
 
 
 
 	/**
-	 * Constructor del Bot.
+	 * Enviando Petición API.
 	 *
-	 * @param string (Token Bot).
+	 * @param array (Opciones cURL).
+	 *
+	 * @return bool (Correcto || Error).
 	 */
-	public function __construct($token,$admin)
+	public static function lanzarcURL($opciones)
 	{
-		$this->curl = curl_init();
+		$curl = curl_init();
 
-		$this->token = $token;
-		$this->admin = $admin;
+		try{
+
+			curl_setopt_array($curl, $opciones);
+			$respuesta = curl_exec($curl);
+
+			// Verificando la Respuesta de la API.
+			if (Validaciones::validarRespuestaJSON($respuesta)){
+				return $respuesta;
+			} else {
+				return false;
+			}
+
+		}catch(Exception $e){
+			echo 'Excepción ocurrida en lanzarcURL: ',  $e->getMessage(), '\n';
+			return false;
+		}
 	}
 
 
-	/**
-	 * Cerrando cURL.
-	 */
-	public function __destruct()
-	{
-		$this->curl && curl_close($this->curl);
-	}
+//========================================================== Funciones API.
 
 
 	/**
 	 *  Envia un Mensaje al Usuario de Telegram.
 	 *
+	 * @param string (Token del Bot).
 	 * @param int (Identificador del Usuario).
 	 * @param string (Contenido del Mensaje).
 	 * @param string (Formato del Mensaje).
@@ -93,12 +79,11 @@ class Bot
 	 *
 	 * @return bool (Correcto || Error)     
 	 */
-	public function enviarMensaje($chat_id,$text,$parse_mode,$disable_web_page_preview=null,
-		$disable_notification=null,$reply_to_message_id=null,$reply_markup=null)
+	public static function enviarMensaje($token,$chat_id,$text,$parse_mode,$disable_web_page_preview=null,$disable_notification=null,$reply_to_message_id=null,$reply_markup=null)
 	{
 		$opciones = [
 
-			CURLOPT_URL => $this->url . $this->token . '/sendMessage',
+			CURLOPT_URL => self::$url . $token . '/sendMessage',
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_POST => true,
 			CURLOPT_POSTFIELDS => [
@@ -112,42 +97,8 @@ class Bot
 			]
 		];
 
-		return ($this->lanzarcURL($opciones)) ? true : false; 
+		return (self::lanzarcURL($opciones)) ? true : false; 
 	}
-
-
-	/**
-	 *  Envia un Mensaje al Usuario de Telegram.
-	 *
-	 * @param objeto json (Estructura del Mensaje Recibido).
-	 *
-	 * @return bool (Correcto || Error)     
-	 */
-	public function procesarMensaje($respuesta)
-	{
-		try{
-
-			// Decodificando la Respuesta del JSON.
-			$mensaje = self::validarRespuestaJSON($respuesta);
-
-			// Verificando si es el Administrador el remitente.
-			if ($mensaje->message->from->id == $this->admin) {
-
-				// Verificando el contenido del Mensaje y respondiendo.
-				$contestar = $this->verificarMensaje($mensaje->message->text);
-
-				$this->enviarMensaje($this->admin,$contestar,'Markdown',null,null,null,null);
-
-				return $mensaje;
-			}
-
-		}catch(Exception $e){
-			echo 'Excepción ocurrida en procesarMensaje: ',  $e->getMessage(), '\n';
-			return false;
-
-		}
-	}
-
 
 
 	/**
@@ -203,87 +154,58 @@ class Bot
 	}
 
 
-
 	/**
-	 * Enviando Petición API.
+	 *  Método para eliminar a un Usuario del Grupo.
 	 *
-	 * @param array (Opciones cURL).
+	 * @param string (Token Bot).
+	 * @param int (chat id).
+	 * @param int (user id).
 	 *
-	 * @return bool (Correcto || Error).
+	 * @return bool.    
 	 */
-	private function lanzarcURL($opciones)
+	public static function eliminarMiembro($token,$chat_id,$user_id)
 	{
-		try{
+		$opciones = [
 
-			curl_setopt_array($this->curl, $opciones);
-			$respuesta = curl_exec($this->curl);
+			CURLOPT_URL => self::$url . $token . '/kickChatMember',
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => [
+				'chat_id' => $chat_id,
+				'user_id' => $user_id,
+			]
+		];
 
-			// Verificando la Respuesta de la API.
-			if (self::validarRespuestaJSON($respuesta)){
-				return $respuesta;
-			} else {
-				throw new Exception('La API nos devuelve error al mensaje.');
-			}
-
-		}catch(Exception $e){
-			echo 'Excepción ocurrida en lanzarcURL: ',  $e->getMessage(), '\n';
-			return false;
-		}
+		return (self::lanzarcURL($opciones)) ? true : false;
 	}
 
 
 	/**
-	 * Verificador de la Respuesta de la API.
+	 *  Método para eliminar un Mensaje de un Usuario de un Grupo.
 	 *
-	 * @param objeto json.
+	 * @param string (Token Bot).
+	 * @param int (chat id).
+	 * @param int (mensaje id).
 	 *
-	 * @return string.
+	 * @return bool.    
 	 */
-	public static function validarRespuestaJSON($json)
+	public static function eliminarMensaje($token,$chat_id,$message_id)
 	{
-		$respuesta = json_decode($json);
+		$opciones = [
 
-		// Verificando que se ha podido decodificar el JSON.
-		if ($respuesta == null) {
-			throw new Exception('Error Decodificando el JSON.');
-		} else {
-			return $respuesta;
-		}
+			CURLOPT_URL => self::$url . $token . '/deleteMessage',
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => [
+				'chat_id' => $chat_id,
+				'message_id' => $message_id,
+			]
+		];
+
+		return (self::lanzarcURL($opciones)) ? true : false;
 	}
-
-
-
-	/**
-	 * Subdivide el mensaje original y comprueba
-	 * su contenido, lo filtra y determina
-	 * una respuesta que arrojar.
-	 *
-	 * @param string (contenido del mensaje).
-	 *
-	 * @return string (respuesta a enviar).
-	 */
-	private function verificarMensaje($mensaje)
-	{
-		// Obteniendo los grupos de argumentos.
-		$argumentos = explode(' ', $mensaje);
-
-		try{
-
-			// Verificando que el 1er argumento sea un comando.
-			if (Validaciones::isACommand($argumentos[0])) {
-				return Validaciones::buscarComando($argumentos,sizeof($argumentos));
-			} else {
-				throw new Exception('Error not Command');
-			}
-
-		}catch(Exception $e){
-			return 'Invalid!';
-		}
-	}
-
 
 
 } // Fin Clase Bot.
-
 
 ?>

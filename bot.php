@@ -24,118 +24,82 @@
 define('KEY', '');
 define('REFERENCIA', ''.KEY);
 define('TOKEN', '');
-define('ADMIN', );
+define('ADMIN',);
 
 
+require "botClass.php";
+require "validateClass.php";
+require "processClass.php";
 
-// Estableciendo datos iniciales de Tiempo y Memoria.
-$tinicial = microtime(true);
-$minicial = memory_get_usage()/1024;
 
-
-/**
- *  Recibiendo la Solicitud y
- *  estableciendo el Webhook.
- *
- */
-if (!empty($_GET['setHook'])) {
+// Si recibe el parámetro Key, significa que el mensaje viene de Telegram.
+if (isset($_GET['key'])) {
 	
-	require 'botClass.php';
-
-	// Estableciendo el Webhook a la API.
-	$ret = Bot::establecerWebhook(TOKEN,REFERENCIA);
-
-	var_dump($ret);
-
-	// Mostrando Datos de Tiempo Demorado.
-	$tfinal = microtime(true);
-	echo "\nTiempo gastado: ";
-	echo ($tfinal-$tinicial);
-	echo " segundos";
-
-	// Mostrando Datos de la Memoria Consumida
-	$mfinal = memory_get_usage()/1024;
-	echo "\nMemoria al liberar objeto: ";
-	echo $mfinal - $minicial;
-	echo "Kb\n";
-
-	exit();
-
-
-/**
- *  Recibiendo la Solicitud y
- *  eliminando el Webhook.
- *
- */
-} else if (!empty($_GET['delHook'])){
-
-	require 'botClass.php';
-
-	// Eliminando el Webhook de la API.
-	$ret = Bot::removerWebhook(TOKEN);
-
-	var_dump($ret);
-
-	// Mostrando Datos de Tiempo Demorado.
-	$tfinal = microtime(true);
-	echo "<br>Tiempo gastado: ";
-	echo ($tfinal-$tinicial);
-	echo " segundos";
-
-	// Mostrando Datos de la Memoria Consumida
-	$mfinal = memory_get_usage()/1024;
-	echo "<br>Memoria al liberar objeto: ";
-	echo $mfinal - $minicial;
-	echo "Kb";
-
-	exit();
-
-
-/**
- *  Recibiendo la Key por GET,
- *  y, en caso de ser auténtica,
- *  procesando el Mensaje recibido
- *  de Telegram.
- *
- */
-} else if (!empty($_GET['key'])) {
-
-	require 'botClass.php';
-	require 'validateClass.php';
-
-
-	// Verificando que la KEY recibida coincide con la almacenada y propocionada a la API.
-	if ($_GET['key'] == KEY) {
-
+	// Si no me coinciden las Claves, significa que alguien ha descubierto la ruta.
+	if ($_GET['key'] === KEY) {
 
 		// Obteniendo los datos retornados por la API en formato JSON.
 		$datos = file_get_contents('php://input');
 
-		if (!empty($datos)) {
-			
-			// Creando el Objeto del Bot.
-			$bot = new Bot(TOKEN,ADMIN);
+		// Obteniendo a partir del JSON el array respuesta.
+		$datos = Validaciones::validarRespuestaJSON($datos);
 
-			// Procesando el Mensaje recibido de la API.
-			$datos = $bot->procesarMensaje($datos);
+
+		// Comprobando si hay un Nuevo Usuario en el Chat.
+		if (($name = Process::esNuevoMiembro($datos))!=null) {
+
+			// Comprobando que el Usuario no es un Bot.
+			if (!Process::esUnBot($datos)) {
+
+				Bot::enviarMensaje(TOKEN,ADMIN,'El Usuario: '.$name.' se ha unido al grupo','Markdown',null,null,null,null);
+			} else {
+				
+				// Eliminando al Nuevo Usuario que es un Bot.
+				Bot::eliminarMiembro(TOKEN,$datos['message']['chat']['id'],$datos['message']['new_chat_participant']['id']);
+			}
+		} else if (($name = Process::seFueUsuario($datos))!=null) {
+
+			Bot::enviarMensaje(TOKEN,ADMIN,'El Usuario: '.$name.' ha abandonado el grupo','Markdown',null,null,null,null);
 
 		} else {
-			exit();
+
+			//$pasarle = print_r($datos,true);
+			//Bot::enviarMensaje(TOKEN,ADMIN,$pasarle,'Markdown',null,null,null,null);
+
+			// Comprobando si el Mensaje es un Sticker o GIF.
+			if (Process::esUnSticker($datos)){
+				Bot::eliminarMensaje(TOKEN,$datos['message']['chat']['id'],$datos['message']['message_id']);
+			} else if (Process::esUnGif($datos)){
+				Bot::eliminarMensaje(TOKEN,$datos['message']['chat']['id'],$datos['message']['message_id']);
+			}
+
+			Bot::enviarMensaje(TOKEN,ADMIN,'Nuevo Mensaje Normal','Markdown',null,null,null,null);
 		}
+
+	} else {
+		
+		Bot::enviarMensaje(TOKEN,ADMIN,'Se han equivocado con la KEY xD','Markdown',null,null,null,null);
+
+		echo '{"Error" : "8================D"}';
 	}
 
-	// Mostrando Datos de Tiempo Demorado.
-	$tfinal = microtime(true);
-	echo "Tiempo gastado: ";
-	echo ($tfinal-$tinicial);
-	echo " segundos";
 
-	// Mostrando Datos de la Memoria Consumida
-	$mfinal = memory_get_usage()/1024;
-	echo "Memoria después de liberar objeto: ";
-	echo $mfinal - $minicial;
-	echo "Kb\n";
+// Para establecer un WebHook con la API.
+} else if (isset($_GET['setHook'])) {
 
+	// Estableciendo el Webhook a la API.
+	$ret = Bot::establecerWebhook(TOKEN,REFERENCIA);
+
+// Para eliminar un WebHook con la API.
+} else if (isset($_GET['setHook'])) {
+
+	// Eliminando el Webhook de la API.
+	$ret = Bot::removerWebhook(TOKEN);
+
+} else {
+	
+	Bot::enviarMensaje(TOKEN,ADMIN,'Nuevo Mensaje sin KEY xD','Markdown',null,null,null,null);
+	echo '{"Error" : "8====D"}';
 }
 
 ?>

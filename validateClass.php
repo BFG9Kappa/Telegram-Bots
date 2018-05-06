@@ -16,38 +16,38 @@ class Validaciones
 {
 
 	/**
-	 * Verifica si un argumento se
-	 * identifica como un comando 
-	 * de Telegram.
+	 * Función que verifica si un argumento
+	 * se identifica como un comando válido
+	 * para el Bot de Telegram.
 	 *
-	 * @param string.
+	 * @param string `comando`.
 	 *
 	 * @return bool.
 	 */
 	public static function isACommand($argum)
 	{
-		return ((isset($argum[0])) && ($argum[0] == '/') 
-			&& (self::contarChar($argum,'/') == 1)) ? true : false;
+		// Asegura que empieza por '/' y que sólo tiene una '/'.
+		return (bool)((isset($argum[0])) && ($argum[0] === '/') 
+			&& (self::contarChar($argum,'/') === 1)) ? true : false;
 	}
 
 
 
 	/**
-	 * Devuelve el nº de coincidencias
-	 * con un carácter especificado por
-	 * parámetro.
+	 * Función que obtiene el nº de apariciones
+	 * de un carácter objetivo, sobre una cadena.
 	 *
-	 * @param string (palabra).
-	 * @param string (carácter clave).
+	 * @param string `cadena`.
+	 * @param string `carácter objetivo`.
 	 *
-	 * @return int (nº de coincidencias).
+	 * @return int `nº de coincidencias`.
 	 */
 	public static function contarChar($argum,$ch)
 	{
 		$cont = 0;
 		$tam = strlen($argum);
 		while ($tam--) {
-			$cont += ($argum[$tam] == $ch) ? 1 : 0;
+			$cont += ($argum[$tam] === $ch) ? 1 : 0;
 		}
 
 		return $cont;
@@ -56,53 +56,25 @@ class Validaciones
 
 
 	/**
-	 * Comprueba entre los comandos
-	 * especificados, para retornar
-	 * una respuesta.
+	 * Verificador de la Respuesta de la API.
 	 *
-	 * @param array (array de argumentos).
+	 * @param objeto JSON.
 	 *
-	 * @return string (respuesta al comando).
+	 * @return string.
 	 */
-	public static function buscarComando($argumentos,$num)
+	public static function validarRespuestaJSON($json)
 	{
-		/*
-		 *  Comandos Simples (único argumento).
-		 */
-		if (($num === 1) && ($argumentos[0] === '/start')) {
-			return 'Hola';
-		} elseif (($num === 1) && ($argumentos[0] === '/help')) {
-			return 'Ayuda';
-		} elseif (($num === 1) && ($argumentos[0] === '/ping')) {
-			return 'pong';
+		$respuesta = json_decode($json,true);
 
-		/*
-		 *  Comando Complejo (argumentos múltiples).
-		 */
-		} elseif (($num === 2) && ($argumentos[0] === '/di')) {
-			return self::sanitizar($argumentos[1]);
+		// Verificando que se ha podido decodificar el JSON.
+		if ($respuesta == null) {
+			throw new Exception('Error Decodificando el JSON.');
 		} else {
-			throw new Exception("Error Comando");
+			return $respuesta;
 		}
 	}
 
 
-	/**
-	 * Sanitiza un string de 
-	 * posibles inyecciones.
-	 *
-	 * @param string (palabra).
-	 *
-	 * @return string (palabra sanitizada).
-	 */
-	public static function sanitizar($cadena)
-	{
-		return htmlspecialchars(str_replace('\'', '', $cadena),ENT_QUOTES);
-	}
-
-
-
 }	// Fin Clase.
-
 
 ?>
