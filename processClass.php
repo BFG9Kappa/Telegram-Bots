@@ -20,7 +20,7 @@ class Process
 
 
 	/**
-	 * 	ARREGLAR ESTO.
+	 * Método que parsea argumentos, necesita algunas modificaciones.
 	 *
 	 * @param array (array de argumentos).
 	 *
