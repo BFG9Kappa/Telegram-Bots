@@ -2,7 +2,7 @@
 # Telegram-Bots.
 
 
-## Disclaimer.
+## :warning: Disclaimer.
 
 Antes de empezar, sólo unas breves palabras, porque con lo que se os viene me vais a odiar con la
 parrafada:
@@ -17,9 +17,9 @@ que planea sobre mi habitación.
 
 > Los bots son al mundo lo que la automatización es a la informática. - Secury.
 
-Esto es la primera parte, espero que de muchas, acerca del tema de Bots. Cualquier duda que surga,
-por favor, abrir un issue, he pensado que esta es la mejor forma de recopilar dudas y errores que
-puedan surgir, les agradezco mucho la atención.
+Esto es la primera parte, espero que de muchas, acerca del tema de Bots. 
+
+Cualquier duda que surga, por favor, abrir un :exclamation: **issue**, he pensado que esta es la mejor forma de recopilar dudas y errores que puedan surgir, les agradezco mucho la atención.
 
 Bueno... Empecemos!
 
@@ -61,7 +61,7 @@ no esta atado a ninguno de lo anterior, al tomar la definición del punto 1 nos 
 Pero apesar de la definición, para empezar, esta bien apoyarse en una plataforma que te asegure la parte, quizás, más complicada del proceso, y es esa vía de comunicación con tu bot (que no deja de ser un programa). Pensemos que esa vía de comunicación tiene que ser sencilla y limpia, y sobretodo tiene que mantenerse activa, porque sino no podremos comunicarle a nuestro bot lo que tiene que hacer.
 
 
-Dicho esto, para este ejemplo utilizaré Telegram, la App de Mensajería, ya que proporciona una [API](https://core.telegram.org/bots/api)¹ para "crear" y controlar bots (Y esto puede parecer muy enrevesado o complejo, pero en realidad el funcionamiento es bastante simple). 
+Dicho esto, para este ejemplo utilizaré Telegram, la App de Mensajería, ya que proporciona una [API](https://core.telegram.org/bots/api) para "crear" y controlar bots (Y esto puede parecer muy enrevesado o complejo, pero en realidad el funcionamiento es bastante simple). 
 
 <img src="https://github.com/secu77/Telegram-Bots/blob/master/images/Bot_tel.jpeg?raw=true" />
 ```
