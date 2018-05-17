@@ -64,6 +64,7 @@ Pero apesar de la definición, para empezar, esta bien apoyarse en una plataform
 Dicho esto, para este ejemplo utilizaré Telegram, la App de Mensajería, ya que proporciona una [API](https://core.telegram.org/bots/api) para "crear" y controlar bots (Y esto puede parecer muy enrevesado o complejo, pero en realidad el funcionamiento es bastante simple). 
 
 <img src="https://github.com/secu77/Telegram-Bots/blob/master/images/Bot_tel.jpeg?raw=true" />
+
 ```
 Telegram actúa como pasarela entre los clientes de su plataforma (Cualquier usuario de Telegram)y los 
 bots (que no dejan de ser programas desarrollados en el lenguaje de programación que más gusto te de). 
