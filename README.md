@@ -94,7 +94,7 @@ Una vez generado el token, necesitaremos definir las dos posibles vías de obten
 <img widht="450px" height="450px" src="https://github.com/secu77/Telegram-Bots/blob/master/images/Bot_Longpolling.jpeg?raw=true" />
 </p>
 
-  - En cambio en método **Webhooking**, es completamente lo contrario, el bot le manda al servidor la dirección IP de donde estará escuchando, y le dice algo así:  `"Cuando tengas notificaciones, mándamelas aquí vale?".` Entonces Telegram cada vez que reciba una nueva notificación que afecta a nuestro bot, ya sea un mensaje u otra cosa, le mandará un **JSON** con el mensaje (ese único mensaje) a través de la API al bot.
+  - En cambio en método **Webhooking**, es completamente lo contrario, el bot le manda al servidor la dirección IP de donde estará escuchando, y le dice algo así:  `"Cuando tengas notificaciones, mándamelas aquí vale?".` Entonces Telegram cada vez que reciba una nueva notificación que afecta a nuestro bot, ya sea un mensaje u otra cosa, le mandará un **JSON** con el mensaje (ese único mensaje) a través de la API al bot. **Importante**: para utilizar este método, Telegram nos obliga a establecer un canal seguro, por tanto, nos pide que nuestro servidor (o lugar donde mantengamos el bot) vaya bajo SSL.
 
 <p align="center">
 <img widht="450px" height="450px" src="https://github.com/secu77/Telegram-Bots/blob/master/images/Bot_Webhooking.jpeg?raw=true" />
@@ -145,6 +145,21 @@ Para ello, he preparado, de forma personal, y con el simple objetivo de profundi
 Y por último, simplemente decir que lo que aquí habéis visto (y el conjunto de clases y ficheros que os dejo), se denomina **"wrapper"**, que es como una capa por encima de la API (atendiendo a la definición, 'como para envolverla' en su totalidad) para tratar esta **de forma sencilla** (en vez de tener que hacer cada petición como hemos visto antes de forma manual, **utilizamos las funciones que harán eso mismo por nosotros**).
 
 Cada función esta explicada en la [**Clase**](https://github.com/secu77/Telegram-Bots/blob/master/botClass.php) y se apoya de un [**ejemplo**](https://github.com/secu77/Telegram-Bots/blob/master/bot.php) sencillo de funcionamiento.
+
+Para empezar a utilizar el Bot, nos situamos en el archivo [**bot.php**](https://github.com/secu77/Telegram-Bots/blob/master/bot.php), y previsualizamos los siguientes campos:
+
+<img src="https://github.com/secu77/Telegram-Bots/blob/master/images/botfile.png?raw=true" />
+
+  - El campo **KEY** contendrá una clave que necesitamos establecer: ¿Por qué? Porque nuestro Bot va a ser accesible por
+la API de Telegram, al igual que lo será por cualquier otro, y para no procesar mensajes entrantes de cualquier usuario,
+y sólo aceptar los verificados de la API de Telegram, usaremos esa key junto con nuestra referencia (sitio web donde se aloja el bot), para mandarlo a la API y que así, siempre que nos notifique algún suceso, venga con dicha clave, y por tanto, sabremos que ese mensaje será realmente de la API.
+
+  - El campo **Referencia** debe ser el nombre de dominio o dirección IP donde corre nuestro bot.<br />Ex: https://stationx11.es/bot.php (recordar que bajo SSL).
+
+  - El campo **TOKEN** corresponde al TOKEN generado por Bot Father, que antes hemos citado.
+
+  - Y el campo **ADMIN** se refiere al ID (de Telegram) de nuestro usuario (o del usuario, del cual el bot procesará los mensajes que reciba), al ser una prueba, esta diseñado para que sólo responda a esta persona, pero se podría omitir esta condición facilmente y el bot respondería a todo el mundo. El ID lo podemos conseguir preguntandole en Telegram al bot @myidbot (poniendo el comando **/getid**).
+
 
 Cabe destacar que esta Clase esta muy lejos de tener implementados cada uno de los métodos que la API
 utiliza. Por ahora estan algunos importantes e interesantes para trastear un poco. Conforme vaya teniendo tiempo iré añadiendo tanto los métodos restantes como ejemplos de programas o bots, que puedan despertar la inspiración del lector, y puedan ser usados por todos.
