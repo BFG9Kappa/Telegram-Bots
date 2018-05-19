@@ -6,12 +6,14 @@
   
 # 2. Añadir `echo` Bots (ping-pong) en distintos lenguajes, intentando incorporar los wrappers de cada lenguaje citados.
 
-# 3. Añadir más gift a explicaciones enrevesadas, para completar los ejemplos y aportar más claridad.
+# 3. Añadir más gifs a explicaciones enrevesadas, para completar los ejemplos y aportar más claridad.
   - Para el ejemplo de Long Polling.
   - Para el ejemplo de Webhooks.
   - Para el uso de la Clase Básica en PHP (setup en el servidor, etc).
   - Para mostrar cómo llegan los mensajes de la API en bruto.
   - Para hacer las modificaciones oportunas del Bot (cambiar token, cambios de aspecto, etc).
+  - Para peticiones manuales por URL.
+  - Para envio de archivos y similares.
   
 # 4. COnfigurar el SSL en el método de Webhooking.
 
