@@ -174,7 +174,7 @@ Hay muchos wrappers, bastante brutales y más currados que este en **Github**, y
   - [**Lenguaje Java**](https://github.com/rubenlagus/TelegramBots)
   - [**Lenguaje C++**](https://github.com/reo7sp/tgbot-cpp)
   - [**Lenguaje Erlang**](https://github.com/seriyps/pe4kin)
-  - [**Lenguaje Go**](https://github.com/mrd0ll4r/tbotapi)
+  - [**Lenguaje Go**](https://github.com/go-telegram-bot-api/telegram-bot-api)
   - [**Lenguaje C#**](https://github.com/MrRoundRobin/telegram.bot)
   - [**Lenguaje Ruby**](https://github.com/eljojo/telegram_bot)
   - [**Lenguaje Lua**](https://github.com/wrxck/telegram-bot-lua)
