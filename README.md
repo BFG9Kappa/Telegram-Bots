@@ -89,7 +89,26 @@ Cada bot es identificado por un **"Token" único**, dicho Token no se asigna a l
 
 Una vez generado el token, necesitaremos definir las dos posibles vías de obtención de mensajes, dependiendo de la tarea que desempeñará el bot, se utilizará uno y otro:
 
-  - El método de **Long Polling** se caracteriza porque el programa (bot) *manda peticiones a una **URL** preguntando por nuevas actualizaciones* (sucesos que han pasado que afectan al bot, ya puede ser un mensaje nuevo, que se le ha añadido a un grupo, etc) de forma continua.
+
+
+  - El método de **Long Polling** es una *variación del polling tradicional*. El Cliente (nuestro bot) hace una petición al Servidor
+  (Api Telegram) con el fin de obtener actualizaciones, **el Servidor puede no responder en el acto**, pongamos un ejemplo:
+  
+  El Bot solicita nuevas actualizaciones, pero el Servidor no tiene dichas actualizaciones, pues... en lugar de devolver una respuesta vacía y cerrar la conexión, lo que hace es **mantener la conexión abierta (un tiempo determinado), y esperar hasta tener los datos solicitados**. Una vez tiene dichos datos, el Servidor los manda al Cliente completando así la solicitud. Y cuando el Cliente recibe esta información, normalmente vuelve a solicitar nuevos datos de la misma forma, consiguiendo de esta forma reducir la latencia entre la primera respuesta y la nueva solicitud.
+
+  Para hacer uso de esta metodología por nuestro bot, la [**documentación de la api de telegram**](https://core.telegram.org/bots/api#getupdates) nos proporciona unos campos adicionales a la hora de solicitar nuevas actualizaciones con el método `/getUpdates`. Dicho método posee 4 parámetros, ```todos opcionales```, pero no nos detendremos a explicar más que 1, que es el que nos interesa para completar dicho método, y es: **'timeout'**.
+
+  Dice así en este parámetro:
+
+  > 'El tiempo de espera en segundos para el Long Polling. Por defecto se establece 0 (polling corto). Debe ser un valor positivo, y el polling corto sólo debe ser usado para pruebas.'
+
+  ¿Qué nos dice con esto? 
+
+  Primero que **establezcamos un timeout**, nada nuevo, pero cabe destacar una palabra clave de importancia que es "short polling", donde nos dice "se establece por defecto un timeout de 0", es decir, una petición completamente instantánea, y cuyo método recomienda no usar por defecto, tan sólo exclusivamente en casos puntuales de desarrollo y pruebas, puesto que dicho método satura el servidor a peticiones reiteradas. Visto esto, procederemos a lo siguiente:
+
+  	-En el bot se establecerá un timeout (dicho valor es opcional, como marca la api) a la hora de hacer la petición al /getUpdates,
+  	en el caso de usarla, en nuestro ejemplo de Webhooks no es necesario puesto que como se puede ver no hacemos uso de dicho método, ya que las nuevas actualizaciones nos vendrán directamente a nuestro bot. Cosa que explicaremos en el siguiente método.
+
 
 <p align="center">
 <img widht="450px" height="450px" src="https://github.com/secu77/Telegram-Bots/blob/master/images/Bot_Longpolling.jpeg?raw=true" />
@@ -190,6 +209,7 @@ Hay muchos wrappers, bastante brutales y más currados que este en **Github**, y
   - http://php.net/
   - https://www.json.org/
   - https://www.pubnub.com/blog/2014-12-01-http-long-polling/
+  - https://en.wikipedia.org/wiki/Push_technology#Long_polling
   - @DevPGSV
 
 
